@@ -11,11 +11,11 @@ namespace EventManagement.API.Models
         [Required]
         public int EventId { get; set; }
         [ForeignKey("EventId")]
-        public Event Event { get; set; }
+        public Event? Event { get; set; }
 
-        public string WeatherRiskForecast { get; set; }
+        public string WeatherRiskForecast { get; set; } = string.Empty;
 
-        public string WeatherSafeguardAdded { get; set; }
+        public string WeatherSafeguardAdded { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal ProposedSubtotal { get; set; }

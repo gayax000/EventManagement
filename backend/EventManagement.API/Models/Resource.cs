@@ -9,9 +9,9 @@ namespace EventManagement.API.Models
         public int ResourceId { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string ResourceType { get; set; } // Venue, Equipment, Catering
+        public string ResourceType { get; set; } = string.Empty; // Venue, Equipment, Catering
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }

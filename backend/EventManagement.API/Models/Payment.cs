@@ -11,17 +11,22 @@ namespace EventManagement.API.Models
         [Required]
         public int BookingId { get; set; }
         [ForeignKey("BookingId")]
-        public Booking Booking { get; set; }
+        public Booking? Booking { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
 
-        public string SlipImageUrl { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal AmountPaid { get; set; }
+
+        public string PaymentMethod { get; set; } = string.Empty;
+
+        public string SlipImageUrl { get; set; } = string.Empty;
 
         public DateTime PaymentDate { get; set; } = DateTime.UtcNow;
 
         public string PaymentStatus { get; set; } = "Pending"; // Pending, Approved, Rejected
 
-        public string AdminRemark { get; set; }
+        public string? AdminRemark { get; set; }
     }
 }

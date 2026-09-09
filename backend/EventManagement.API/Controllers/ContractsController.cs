@@ -17,32 +17,34 @@ namespace EventManagement.API.Controllers
             _context = context;
         }
 
-        // GET: api/contracts/event/{eventId}
-        [HttpGet("event/{eventId}")]
-        public async Task<ActionResult<Contract>> GetContractByEvent(int eventId)
+        // GET: api/contracts/booking/{bookingId}
+        [HttpGet("booking/{bookingId}")]
+        public async Task<ActionResult<Contract>> GetContractByBooking(int bookingId)
         {
             var contract = await _context.Contracts
-                .FirstOrDefaultAsync(c => c.EventId == eventId);
+                .FirstOrDefaultAsync(c => c.BookingId == bookingId);
 
             if (contract == null)
             {
-                return NotFound(new { message = "Contract not found for this event." });
+                return NotFound(new { message = "Contract not found for this booking." });
             }
 
             return contract;
         }
 
-        // POST: api/contracts (Upload digital signature and contract agreement)
+        // POST: api/contracts
+// POST: api/contracts
         [HttpPost]
         public async Task<ActionResult<Contract>> PostContract([FromBody] ContractCreateDto dto)
         {
             var contract = new Contract
             {
-                EventId = dto.EventId,
-                PdfUrl = dto.PdfUrl,
-                DigitalSignature = dto.DigitalSignature,
+                BookingId = dto.EventId,
+                RefCode = "REF-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
+                PdfDocumentUrl = dto.PdfUrl,
+                ClientSignature = dto.DigitalSignature,
                 IsSigned = true,
-                CreatedAt = DateTime.UtcNow
+                GeneratedAt = DateTime.UtcNow
             };
 
             _context.Contracts.Add(contract);

@@ -17,27 +17,28 @@ namespace EventManagement.API.Controllers
             _context = context;
         }
 
-        // GET: api/payments/event/{eventId}
-        [HttpGet("event/{eventId}")]
-        public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsByEvent(int eventId)
+        // GET: api/payments/booking/{bookingId}
+        [HttpGet("booking/{bookingId}")]
+        public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsByBooking(int bookingId)
         {
             return await _context.Payments
-                .Where(p => p.EventId == eventId)
+                .Where(p => p.BookingId == bookingId)
                 .ToListAsync();
         }
 
-        // POST: api/payments (Upload transaction slip / make payment)
+        // POST: api/payments
         [HttpPost]
         public async Task<ActionResult<Payment>> PostPayment([FromBody] PaymentCreateDto dto)
         {
             var payment = new Payment
             {
-                EventId = dto.EventId,
-                Amount = dto.Amount,
+                BookingId = dto.EventId, // Using EventId from DTO mapped to BookingId
+                AmountPaid = dto.Amount,
                 PaymentMethod = dto.PaymentMethod,
                 SlipImageUrl = dto.SlipImageUrl,
-                Status = "PENDING VERIFICATION",
-                PaidAt = DateTime.UtcNow
+                PaymentStatus = "PENDING VERIFICATION",
+                PaymentDate = DateTime.UtcNow,
+                AdminRemark = "Pending review"
             };
 
             _context.Payments.Add(payment);
@@ -46,9 +47,9 @@ namespace EventManagement.API.Controllers
             return Ok(new { message = "Payment slip uploaded successfully, awaiting verification.", paymentId = payment.PaymentId });
         }
 
-        // PUT: api/payments/{id}/verify (Manager approves or rejects payment slip)
+        // PUT: api/payments/{id}/verify
         [HttpPut("{id}/verify")]
-        public async Task<IActionResult> VerifyPayment(int id, [FromBody] string status) // status: APPROVED / REJECTED
+        public async Task<IActionResult> VerifyPayment(int id, [FromBody] string status)
         {
             var payment = await _context.Payments.FindAsync(id);
             if (payment == null)
@@ -56,7 +57,7 @@ namespace EventManagement.API.Controllers
                 return NotFound(new { message = "Payment record not found." });
             }
 
-            payment.Status = status;
+            payment.PaymentStatus = status;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = $"Payment status updated to {status}." });
